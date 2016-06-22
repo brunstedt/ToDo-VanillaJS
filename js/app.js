@@ -13,11 +13,15 @@ var TaskList = (function() {
     // Update DOM
     Main.updateToDoList();
     Main.inputField.value = '';
+    Main.init();
   }
 
   // Remove item
   function remove(id){
-    taskList.splice(id, 1);
+    var taskIndex = find(id);
+    taskList.splice(taskIndex, 1);
+    Main.updateToDoList();
+    Main.init();
     console.log('Removed item width index of ' + id);
   }
 
@@ -29,10 +33,30 @@ var TaskList = (function() {
   */
   function find(id){
     for (var i = 0; i < taskList.length; i++) {
-      if(taskList[i].id === id){
-        return i;
+      if(taskList[i].id === parseInt(id)){
         console.log('Task with id '+ id +' found at index ' + i);
+        return i;
       }
+    }
+  }
+
+  // Filter taskList by title and update UI
+  function search(searchTerm){
+    if(typeof searchTerm !== 'undefined' && searchTerm !== ''){
+
+      var searchHits = [];
+      
+      for (var i = 0; i < taskList.length; i++) {
+        var taskTitle = taskList[i].title.toString().indexOf(searchTerm);
+        if(taskTitle >= 0){
+          searchHits.push(taskList[i].id);
+        }
+      }
+
+      Main.updateToDoList(searchHits);
+
+    }else{
+      Main.updateToDoList();
     }
   }
 
@@ -47,7 +71,8 @@ var TaskList = (function() {
     addItem : add,
     removeItem : remove,
     task : TaskItem,
-    taskList : taskList
+    taskList : taskList,
+    searchTask : search
   };
 
 })();
@@ -97,20 +122,29 @@ var Main = (function() {
   var taskList = document.getElementById('todo-items');
 
   function init(){
-    // Hooks
+    inputField.focus();
+
     // Submit
     submitBtn.onclick = function(){
       FormField.postItem();
     }
 
+    inputField.onkeyup = function(){
+      TaskList.searchTask(inputField.value);
+    }
+
     // Delete ToDo
-    var deleteBtn = document.getElementByClassName('toDo-delete');
-    
+    var deleteButtons = document.getElementsByClassName('toDo-delete');
+    for (var i = 0; i < deleteButtons.length; i++) {
+      deleteButtons[i].onclick = function(){
+        TaskList.removeItem(this.dataset.todoid);
+      }
+    }
 
 
   }
 
-  function updateToDoList(){
+  function updateToDoList(filter){
     // Remove old tasks from list
     taskList.innerHTML = '';
 
@@ -119,6 +153,13 @@ var Main = (function() {
 
     // Loop tasks and create elements in list
     for (var i = 0; i < tasks.length; i++) {
+
+      // If we have a filter defined, skip all tasks that does not match
+      if(typeof filter === 'object' && filter.length >= 1){
+        if(filter.indexOf(tasks[i].id) <= -1){
+          continue;
+        }
+      }
 
       var taskDone = '';
       if(tasks[i].done){
