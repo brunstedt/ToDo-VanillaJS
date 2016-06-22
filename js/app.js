@@ -3,6 +3,16 @@ var TaskList = (function() {
   // Array of tasks
   var taskList = [];
 
+  // Array of categories
+  var taskCategories = ['bugg', 'defect', 'feature request', 'in progress', 'to process'];
+
+  // Get tasks from local storage
+  function get(){
+    var storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    taskList = storedTasks;
+    return taskList;
+  }
+
   // Add or update ToDo
   function add(taskItem){
     if(typeof taskItem.id === 'undefined'){
@@ -27,16 +37,28 @@ var TaskList = (function() {
       }
     }
 
+    // Save tasks
+    save();
+
     // Update DOM
     Main.updateToDoList();
     Main.inputField.value = '';
     Main.init();
   }
 
+
+  // Save to loacal storage
+  function save(){
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+  }
+
+
   // Remove item
   function remove(id){
     var taskIndex = find(id);
     taskList.splice(taskIndex, 1);
+    // Save tasks
+    save();
     Main.updateToDoList();
     Main.init();
   }
@@ -87,7 +109,9 @@ var TaskList = (function() {
     task : TaskItem,
     taskList : taskList,
     searchTask : search,
-    getIndex : find
+    getIndex : find,
+    getTasks : get,
+    getCategories : taskCategories
   };
 
 })();
@@ -139,8 +163,18 @@ var Main = (function() {
   var submitBtn = document.getElementById('todo-submit');
   var inputField = document.getElementById('todo-input');
   var taskList = document.getElementById('todo-items');
+  var categoriesList = document.getElementById('todo-categories');
 
   function init(){
+
+    // Update UI with the tasks
+    updateToDoList();
+
+    // Add categories to UI
+    addCategories();
+
+    // Hook events for dynamic content
+    hookEvents();
 
     // Submit by button
     submitBtn.onclick = function(){
@@ -159,12 +193,34 @@ var Main = (function() {
       TaskList.searchTask(inputField.value);
     }
 
+    inputField.blur();
+
+  }
+
+
+  function addCategories(){
+    // Remove old elements from UI
+    categoriesList.innerHTML = '';
+    // Get categories
+    var categories = TaskList.getCategories;
+    // Update list
+    for (var i = 0; i < categories.length; i++) {
+      var category = '<li class="category category-' + categories[i].toString().replace(' ','') + '" data-categorytitle="' + categories[i] + '">' + categories[i] + '</li>';
+      categoriesList.innerHTML += category;
+    }
+  }
+
+
+  function hookEvents(){
+    // Get tasks
+    var tasks = TaskList.getTasks();
+
     // Mark as done
     var markAsDoneButtons = document.getElementsByClassName('toDo-done');
     for (var i = 0; i < markAsDoneButtons.length; i++) {
       markAsDoneButtons[i].onclick = function(){
         var index = TaskList.getIndex(this.dataset.todoid);
-        var toDo = new TaskList.task(TaskList.taskList[index].title, 'labels', this.checked, TaskList.taskList[index].id);
+        var toDo = new TaskList.task(tasks[index].title, 'labels', this.checked, tasks[index].id);
         TaskList.addItem(toDo);
       }
     }
@@ -177,7 +233,14 @@ var Main = (function() {
       }
     }
 
-    inputField.blur();
+    // Add category
+    var categoryList = document.getElementById('todo-categories');
+    var categoryButtons = categoryList.getElementsByClassName('category');
+    for (var i = 0; i < categoryButtons.length; i++) {
+      categoryButtons[i].onclick = function(){
+        this.classList.toggle('category-selected');
+      }
+    }
 
   }
 
@@ -188,26 +251,27 @@ var Main = (function() {
     taskList.innerHTML = '';
 
     // Get tasks
-    var tasks = TaskList.taskList;
+    var tasks = TaskList.getTasks();
 
     // Loop tasks and create elements in list
     for (var i = 0; i < tasks.length; i++) {
+      var taskDone = '',
+          checked = '',
+          filtered = '';
 
-      // If we have a filter defined, skip all tasks that does not match
+      // If we have a filter defined, update 'filtered' (we'll use it for styling)
       if(typeof filter === 'object' && filter.length >= 1){
         if(filter.indexOf(tasks[i].id) <= -1){
-          continue;
+          filtered = 'task-filtered';
         }
       }
 
-      var taskDone = '',
-          checked = '';
       if(tasks[i].done){
         taskDone = 'task-done';
         checked = 'checked';
       }
 
-      var taskItem = '<li class="'+taskDone+'"><input type="checkbox" '+ checked +' class="toDo-done" data-todoid="'+ tasks[i].id +'"/>D</button>'+ tasks[i].title +'<button class="toDo-delete" data-todoid="'+ tasks[i].id +'">Delete todo</button></li>'
+      var taskItem = '<li class="'+ taskDone +' '+ filtered +'"><input type="checkbox" '+ checked +' id="task-'+ tasks[i].id +'" class="toDo-done" data-todoid="'+ tasks[i].id +'"/><label for="task-'+ tasks[i].id +'">'+ tasks[i].title +'</label><button class="toDo-delete" data-todoid="'+ tasks[i].id +'">Delete todo</button></li>'
       taskList.innerHTML += taskItem;
     }
 

@@ -2,7 +2,79 @@ html,body{
   margin: 0;
 }
 
+
+
+.list-unstyled{
+  list-style-type: none;
+  padding: 0;
+  margin: 5px 0;
+}
+
+.list-inline li{
+  float: left;
+  margin: 0 5px;
+  padding: 5px 8px;
+}
+
+.list-inline li:first-of-type,
+.list-inline li:last-of-type{
+  margin: 0;
+}
+
+
+
 #wrapper{
   margin: 0 auto;
   width: 960px;
+}
+
+#todo-categories,
+#todo-items{
+  width: 100%;
+  float: left;
+}
+
+#todo-items{
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.task-done{
+  background: green;
+}
+
+.task-filtered{
+  opacity: .2;
+  pointer-events: none;
+}
+
+/* Category tag themes */
+.category{
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.category-selected{
+  border: 2px solid #000;
+}
+
+.category-bugg{
+  background: red;
+}
+
+.category-defect{
+  background: yellow;
+}
+
+.category-featurerequest{
+  background: purple;
+}
+
+.category-inprogress{
+  background: green;
+}
+
+.category-toprocess{
+  background: grey;
 }
