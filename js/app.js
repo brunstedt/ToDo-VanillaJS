@@ -21,7 +21,7 @@ var TaskList = (function() {
       */
       var id = taskList.length;
       taskItem.id = id;
-      taskList.push(taskItem);
+      taskList.unshift(taskItem);
     }else{
       /* We got an id, so we check to see if it exists already.
          If we find the id, we update that task, otherwise we'll
@@ -33,7 +33,7 @@ var TaskList = (function() {
         taskList[taskIndex].tags = taskItem.tags;
         taskList[taskIndex].done = taskItem.done;
       }else{
-        taskList.push(taskItem);
+        taskList.unshift(taskItem);
       }
     }
 
@@ -47,9 +47,9 @@ var TaskList = (function() {
   }
 
 
-  // Save to loacal storage
+  // Save to local storage
   function save(){
-    localStorage.setItem("tasks", JSON.stringify(taskList));
+    localStorage.setItem('tasks', JSON.stringify(taskList));
   }
 
 
@@ -139,7 +139,8 @@ var FormField = (function() {
 
     if(validateInputField()){
       // Create new object for our task
-      var toDo = new TaskList.task(validateInputField(), 'labels', false);
+      var selectedToDoLabels = Main.getSelectedLabels();
+      var toDo = new TaskList.task(validateInputField(), selectedToDoLabels, false);
       // ...and post it!
       TaskList.addItem(toDo);
     }else{
@@ -151,7 +152,7 @@ var FormField = (function() {
 
   return {
     postItem : post
-  }
+  };
 
 })();
 
@@ -179,19 +180,19 @@ var Main = (function() {
     // Submit by button
     submitBtn.onclick = function(){
       FormField.postItem();
-    }
+    };
 
     // Submit by [ENTER]
     inputField.onkeypress = function(e){
       if(e.keyCode === 13){
         FormField.postItem();
       }
-    }
+    };
 
     // Filter/Search
     inputField.onkeyup = function(){
       TaskList.searchTask(inputField.value);
-    }
+    };
 
     inputField.blur();
 
@@ -210,6 +211,14 @@ var Main = (function() {
     }
   }
 
+  function getSelectedLabels(){
+    var selectedToDoLabels = [];
+    var selectedCategories = categoriesList.getElementsByClassName('category-selected');
+    for (var i = 0; i < selectedCategories.length; i++) {
+      selectedToDoLabels.push(selectedCategories[i].dataset.categorytitle);
+    }
+    return selectedToDoLabels;
+  }
 
   function hookEvents(){
     // Get tasks
@@ -222,24 +231,24 @@ var Main = (function() {
         var index = TaskList.getIndex(this.dataset.todoid);
         var toDo = new TaskList.task(tasks[index].title, 'labels', this.checked, tasks[index].id);
         TaskList.addItem(toDo);
-      }
+      };
     }
 
     // Delete ToDo
     var deleteButtons = document.getElementsByClassName('toDo-delete');
-    for (var i = 0; i < deleteButtons.length; i++) {
-      deleteButtons[i].onclick = function(){
+    for (var y = 0; y < deleteButtons.length; y++) {
+      deleteButtons[y].onclick = function(){
         TaskList.removeItem(this.dataset.todoid);
-      }
+      };
     }
 
     // Add category
     var categoryList = document.getElementById('todo-categories');
     var categoryButtons = categoryList.getElementsByClassName('category');
-    for (var i = 0; i < categoryButtons.length; i++) {
-      categoryButtons[i].onclick = function(){
+    for (var x = 0; x < categoryButtons.length; x++) {
+      categoryButtons[x].onclick = function(){
         this.classList.toggle('category-selected');
-      }
+      };
     }
 
   }
@@ -255,24 +264,46 @@ var Main = (function() {
 
     // Loop tasks and create elements in list
     for (var i = 0; i < tasks.length; i++) {
-      var taskDone = '',
+      var taskId = tasks[i].id,
+          taskTitle = tasks[i].title,
+          taskLabels = tasks[i].labels,
+          taskDone = tasks[i].done,
           checked = '',
           filtered = '';
 
       // If we have a filter defined, update 'filtered' (we'll use it for styling)
       if(typeof filter === 'object' && filter.length >= 1){
-        if(filter.indexOf(tasks[i].id) <= -1){
+        if(filter.indexOf(taskId) <= -1){
           filtered = 'task-filtered';
         }
       }
 
-      if(tasks[i].done){
+      if(taskDone){
         taskDone = 'task-done';
         checked = 'checked';
+      }else{
+        taskDone = '';
       }
 
-      var taskItem = '<li class="'+ taskDone +' '+ filtered +'"><input type="checkbox" '+ checked +' id="task-'+ tasks[i].id +'" class="toDo-done" data-todoid="'+ tasks[i].id +'"/><label for="task-'+ tasks[i].id +'">'+ tasks[i].title +'</label><button class="toDo-delete" data-todoid="'+ tasks[i].id +'">Delete todo</button></li>'
+      // Create task element and append to DOM
+      var taskItem = '<li class="task-item row '+ taskDone +' '+ filtered +'">'
+                    +'<div class="col-2-4">'
+                    +'<input type="checkbox" '+ checked +' id="task-'+ taskId +'" class="toDo-done" data-todoid="'+ taskId +'"/>'
+                    +'<label class="task-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
+                    +'</div><div class="col-2-4">'
+                    +'<ul class="list-inline list-unstyled task-labels" id="task-labels-'+ taskId +'"></ul>'
+                    +'<button class="toDo-delete pull-right" data-todoid="'+ taskId +'">Delete todo</button>'
+                    +'</div></li>';
       taskList.innerHTML += taskItem;
+
+      // Create task label list and append to DOM
+      var taskLabelsList = document.getElementById('task-labels-'+taskId);
+      var taskLabelsStr = '';
+      for (var z = 0; z < taskLabels.length; z++) {
+        taskLabelsStr += '<li class="category category-sm category-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
+      }
+      taskLabelsList.innerHTML += taskLabelsStr;
+
     }
 
   }
@@ -282,8 +313,9 @@ var Main = (function() {
     submitButton : submitBtn,
     inputField : inputField,
     init : init,
-    updateToDoList : updateToDoList
-  }
+    updateToDoList : updateToDoList,
+    getSelectedLabels : getSelectedLabels
+  };
 
 })();
 

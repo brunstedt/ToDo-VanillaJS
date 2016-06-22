@@ -7,10 +7,17 @@
   </head>
   <body>
     <div id="wrapper">
-      <input type="text" id="todo-input" placeholder="Search or add item" /><button id="todo-submit">Add</button>
-      <ul class="list-inline list-unstyled" id="todo-categories"></ul>
+      <div class="row">
+        <input type="text" id="todo-input" placeholder="Search or add item" />
+        <button class="btn btn-lg btn-success" id="todo-submit">Add</button>
+      </div>
+      <div class="row">
+        <ul class="list-inline list-unstyled" id="todo-categories"></ul>
+      </div>
 
-      <ul id="todo-items" class="list-unstyled"></ul>
+      <div class="row">
+        <ul id="todo-items" class="list-unstyled row"></ul>
+      </div>
     </div>
 
     <script src="js/app.js" type="text/javascript"></script>
