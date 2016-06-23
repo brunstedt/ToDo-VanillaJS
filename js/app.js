@@ -19,7 +19,14 @@ var TaskList = (function() {
       /* If it's a new task (no id passed), we give
         the task an id before adding it.
       */
-      var id = taskList.length;
+
+      var id = '';
+      if(taskList !== null){
+          id = taskList.length;
+      }else{
+          id = '0';
+      }
+
       taskItem.id = id;
       taskList.unshift(taskItem);
     }else{
@@ -80,10 +87,12 @@ var TaskList = (function() {
 
     if(typeof searchTerm !== 'undefined' && searchTerm !== ''){
       var searchHits = [];
-      for (var i = 0; i < taskList.length; i++) {
-        var taskTitle = taskList[i].title.toString().indexOf(searchTerm);
-        if(taskTitle >= 0){
-          searchHits.push(taskList[i].id);
+      if(taskList !== null){
+        for (var i = 0; i < taskList.length; i++) {
+          var taskTitle = taskList[i].title.toString().indexOf(searchTerm);
+          if(taskTitle >= 0){
+            searchHits.push(taskList[i].id);
+          }
         }
       }
       Main.updateToDoList(searchHits);
@@ -262,48 +271,51 @@ var Main = (function() {
     // Get tasks
     var tasks = TaskList.getTasks();
 
-    // Loop tasks and create elements in list
-    for (var i = 0; i < tasks.length; i++) {
-      var taskId = tasks[i].id,
-          taskTitle = tasks[i].title,
-          taskLabels = tasks[i].labels,
-          taskDone = tasks[i].done,
-          checked = '',
-          filtered = '';
+    if(tasks !== null){
 
-      // If we have a filter defined, update 'filtered' (we'll use it for styling)
-      if(typeof filter === 'object' && filter.length >= 1){
-        if(filter.indexOf(taskId) <= -1){
-          filtered = 'task-filtered';
+      // Loop tasks and create elements in list
+      for (var i = 0; i < tasks.length; i++) {
+        var taskId = tasks[i].id,
+            taskTitle = tasks[i].title,
+            taskLabels = tasks[i].labels,
+            taskDone = tasks[i].done,
+            checked = '',
+            filtered = '';
+
+        // If we have a filter defined, update 'filtered' (we'll use it for styling)
+        if(typeof filter === 'object' && filter.length >= 1){
+          if(filter.indexOf(taskId) <= -1){
+            filtered = 'task-filtered';
+          }
         }
+
+        if(taskDone){
+          taskDone = 'task-done';
+          checked = 'checked';
+        }else{
+          taskDone = '';
+        }
+
+        // Create task element and append to DOM
+        var taskItem = '<li class="task-item row '+ taskDone +' '+ filtered +'">'
+                      +'<div class="col-2-4">'
+                      +'<input type="checkbox" '+ checked +' id="task-'+ taskId +'" class="toDo-done" data-todoid="'+ taskId +'"/>'
+                      +'<label class="task-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
+                      +'</div><div class="col-2-4">'
+                      +'<ul class="list-inline list-unstyled task-labels" id="task-labels-'+ taskId +'"></ul>'
+                      +'<button class="toDo-delete pull-right" data-todoid="'+ taskId +'">Delete todo</button>'
+                      +'</div></li>';
+        taskList.innerHTML += taskItem;
+
+        // Create task label list and append to DOM
+        var taskLabelsList = document.getElementById('task-labels-'+taskId);
+        var taskLabelsStr = '';
+        for (var z = 0; z < taskLabels.length; z++) {
+          taskLabelsStr += '<li class="category category-sm category-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
+        }
+        taskLabelsList.innerHTML += taskLabelsStr;
+
       }
-
-      if(taskDone){
-        taskDone = 'task-done';
-        checked = 'checked';
-      }else{
-        taskDone = '';
-      }
-
-      // Create task element and append to DOM
-      var taskItem = '<li class="task-item row '+ taskDone +' '+ filtered +'">'
-                    +'<div class="col-2-4">'
-                    +'<input type="checkbox" '+ checked +' id="task-'+ taskId +'" class="toDo-done" data-todoid="'+ taskId +'"/>'
-                    +'<label class="task-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
-                    +'</div><div class="col-2-4">'
-                    +'<ul class="list-inline list-unstyled task-labels" id="task-labels-'+ taskId +'"></ul>'
-                    +'<button class="toDo-delete pull-right" data-todoid="'+ taskId +'">Delete todo</button>'
-                    +'</div></li>';
-      taskList.innerHTML += taskItem;
-
-      // Create task label list and append to DOM
-      var taskLabelsList = document.getElementById('task-labels-'+taskId);
-      var taskLabelsStr = '';
-      for (var z = 0; z < taskLabels.length; z++) {
-        taskLabelsStr += '<li class="category category-sm category-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
-      }
-      taskLabelsList.innerHTML += taskLabelsStr;
-
     }
 
   }
