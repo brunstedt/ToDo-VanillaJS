@@ -96,10 +96,20 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   text-transform: uppercase;
 }
 
+.btn-disabled{
+  pointer-events: none;
+  opacity: .3;
+}
+
 .btn-bordered{
   background: transparent;
   border: 1px solid #333;
   color: #333;
+}
+
+.btn-bordered:hover{
+  background: #333;
+  color: #fff;
 }
 
 .btn-md{
@@ -137,18 +147,22 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   position: relative;
   transition: all 0.15s cubic-bezier(.25,.8,.25,1);
   overflow-x: hidden;
+  border-left: 5px solid transparent;
 }
 
 .task-row:nth-of-type(even){
   background: #f9f9f9;
 }
 
-
 .task-row:hover{
   background: #fff !important;
   z-index: 2;
   box-shadow: 0 2px 2px 3px rgba(0,0,0,.05);
   transform: scale(1.005);
+}
+
+.task-row-selected{
+  border-color: #333;
 }
 
 .task-row-title{

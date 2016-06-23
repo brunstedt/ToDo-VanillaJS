@@ -196,7 +196,9 @@ var Main = (function() {
       inputField = document.getElementById('todo-input'),
       taskList = document.getElementById('todo-items'),
       labelsList = document.getElementById('todo-categories'),
-      deleteButton = document.getElementById('delete-todos');
+      deleteButton = document.getElementById('delete-todos'),
+      selectAllButton = document.getElementById('selectAll'),
+      markSelectedAsDone = document.getElementById('markasdone-todos');
 
 
   function init(){
@@ -209,23 +211,6 @@ var Main = (function() {
 
     // Hook events for dynamic content
     hookEvents();
-
-    // Submit by button
-    submitBtn.onclick = function(){
-      FormField.postItem();
-    };
-
-    // Submit by [ENTER]
-    inputField.onkeypress = function(e){
-      if(e.keyCode === 13){
-        FormField.postItem();
-      }
-    };
-
-    // Filter/Search
-    inputField.onkeyup = function(){
-      TaskList.searchTask(inputField.value);
-    };
 
   }
 
@@ -257,27 +242,74 @@ var Main = (function() {
   // Bind DOM elements
   function hookEvents(){
 
-    // Get tasks
-    var tasks = TaskList.getTasks();
+    // Submit by button
+    submitBtn.onclick = function(){
+      FormField.postItem();
+    };
 
-    // Select or mark as done
-    var toDoCheckboxes = document.getElementsByClassName('toDo-checkBox');
-    for (var i = 0; i < toDoCheckboxes.length; i++) {
+    // Submit by [ENTER]
+    inputField.onkeypress = function(e){
+      if(e.keyCode === 13){
+        FormField.postItem();
+      }
+    };
 
-      toDoCheckboxes[i].onclick = function(){
-        var index = TaskList.getIndex(this.dataset.todoid);
-        if(this.name === 'toDo-done'){
-          var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, this.checked, tasks[index].id, tasks[index].selected);
-        }else if(this.name === 'toDo-select'){
-          var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, tasks[index].done, tasks[index].id, this.checked);
-        }else{
-          return false;
+    // Filter/Search
+    inputField.onkeyup = function(){
+      TaskList.searchTask(inputField.value);
+    };
+
+
+    // Select all tasks
+    selectAllButton.onclick = function(){
+      var checkboxes = document.getElementsByName('toDo-select');
+      var checked = 'checked';
+      var state = true;
+
+      if(checkboxes.length && checkboxes[0].checked){
+        checked = '';
+        state = false;
+      }
+
+      for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].setAttribute('checked', checked);
+        checkboxes[i].checked = state;
+        // Trigger event
+        var event = new Event('change');
+        checkboxes[i].dispatchEvent(event);
+      }
+
+      var taskRows = document.getElementsByClassName('task-row');
+      if(state){
+        for (var i = 0; i < taskRows.length; i++) {
+          taskRows[i].classList.add('task-row-selected');
         }
-        TaskList.addItem(toDo);
-      };
+      }else{
+        for (var i = 0; i < taskRows.length; i++) {
+          taskRows[i].classList.remove('task-row-selected');
+        }
+      }
 
     }
 
+
+    // mark as done (button)
+    markSelectedAsDone.onclick = function(){
+      var toDoSelect = document.getElementsByName('toDo-select'),
+          tasks = TaskList.getTasks();
+
+          for (var i = 0; i < toDoSelect.length; i++) {
+            if(toDoSelect[i].checked){
+              var index = TaskList.getIndex(toDoSelect[i].dataset.todoid);
+              var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, true, tasks[index].id, tasks[index].checked);
+              TaskList.addItem(toDo);
+
+              // Trigger event
+              var event = new Event('change');
+              toDoSelect[i].dispatchEvent(event);
+            }
+          }
+    }
 
 
     // Delete ToDo's
@@ -296,7 +328,6 @@ var Main = (function() {
       }else{
         return false;
       }
-
     }
 
     // Add category
@@ -306,6 +337,50 @@ var Main = (function() {
       categoryButtons[x].onclick = function(){
         this.classList.toggle('category-selected');
       };
+    }
+
+    // Select row-checkboxes
+    var checkboxes = document.getElementsByClassName('toDo-checkBox');
+
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].onchange = function(){
+        if(this.name === 'toDo-select'){
+          selectTaskEvent(this);
+        }else if(this.name === 'toDo-done'){
+          markAsDoneEvent(this);
+        }else{
+          return false;
+        }
+      }
+    }
+
+    // When a task is selected
+    function selectTaskEvent(task){
+      var tasks = TaskList.getTasks();
+      var index = TaskList.getIndex(task.dataset.todoid);
+      var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, tasks[index].done, tasks[index].id, task.checked);
+      TaskList.addItem(toDo);
+
+      var rowSelected = false;
+      if(task.checked){
+        rowSelected = true;
+      }
+
+      if(rowSelected){
+        deleteButton.classList.remove('btn-disabled');
+        markSelectedAsDone.classList.remove('btn-disabled');
+      }else{
+        deleteButton.classList.add('btn-disabled');
+        markSelectedAsDone.classList.add('btn-disabled');
+      }
+    }
+
+    // Mark task as done event
+    function markAsDoneEvent(task){
+      var tasks = TaskList.getTasks();
+      var index = TaskList.getIndex(task.dataset.todoid);
+      var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, task.checked, tasks[index].id, tasks[index].selected);
+      TaskList.addItem(toDo);
     }
   }
 

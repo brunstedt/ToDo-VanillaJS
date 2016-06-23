@@ -21,7 +21,11 @@
 
       <!--- ToDo list actions --->
       <div class="row">
-        <button id="delete-todos" class="btn btn-md btn-bordered btn-danger">Delete selected</button>
+        <ul class="list-inline list-unstyled">
+          <li><button id="selectAll" class="btn btn-md btn-bordered">Select all tasks</button></li>
+          <li><button id="delete-todos" class="btn btn-md btn-bordered btn-danger btn-disabled">Delete selected</button></li>
+          <li><button id="markasdone-todos" class="btn btn-md btn-bordered btn-success btn-disabled">Mark selected as done</button></li>
+        </ul>
       </div>
 
       <!--- ToDo list --->
