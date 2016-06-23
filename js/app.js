@@ -9,7 +9,11 @@ var TaskList = (function() {
   // Get tasks from local storage
   function get(){
     var storedTasks = JSON.parse(localStorage.getItem("tasks"));
-    taskList = storedTasks;
+
+    if(storedTasks !== null){
+      taskList = storedTasks;
+    }
+
     return taskList;
   }
 
@@ -39,6 +43,7 @@ var TaskList = (function() {
         taskList[taskIndex].title = taskItem.title;
         taskList[taskIndex].tags = taskItem.tags;
         taskList[taskIndex].done = taskItem.done;
+        taskList[taskIndex].selected = taskItem.selected;
       }else{
         taskList.unshift(taskItem);
       }
@@ -48,8 +53,8 @@ var TaskList = (function() {
     save();
 
     // Update DOM
-    Main.updateToDoList();
     Main.inputField.value = '';
+    Main.updateToDoList();
     Main.init();
   }
 
@@ -62,10 +67,26 @@ var TaskList = (function() {
 
   // Remove item
   function remove(id){
-    var taskIndex = find(id);
-    taskList.splice(taskIndex, 1);
+    var taskIndex;
+
+    if(typeof id === 'string'){
+      taskIndex = find(id);
+      taskList.splice(taskIndex, 1);
+    }else if(typeof id === 'object'){
+      // Loop the array of id's to remove and remove them from taskList
+      for (var i = 0; i < id.length; i++) {
+        taskIndex = find(id[i]);
+        taskList.splice(taskIndex, 1);
+      }
+
+    }else{
+      return false;
+    }
+
     // Save tasks
     save();
+
+    // Update DOM
     Main.updateToDoList();
     Main.init();
   }
@@ -104,11 +125,12 @@ var TaskList = (function() {
 
 
   // The TaskItem, to be pupolated and sent to list
-  function TaskItem(title, labels, done, id) {
+  function TaskItem(title, labels, done, id, selected) {
       this.id = id;
       this.title = title;
       this.done = done;
       this.labels = labels;
+      this.selected = selected;
   }
 
 
@@ -120,7 +142,7 @@ var TaskList = (function() {
     searchTask : search,
     getIndex : find,
     getTasks : get,
-    getCategories : taskCategories
+    getLabels : taskCategories
   };
 
 })();
@@ -170,10 +192,12 @@ var FormField = (function() {
 var Main = (function() {
 
   // DOM elements
-  var submitBtn = document.getElementById('todo-submit');
-  var inputField = document.getElementById('todo-input');
-  var taskList = document.getElementById('todo-items');
-  var categoriesList = document.getElementById('todo-categories');
+  var submitBtn = document.getElementById('todo-submit'),
+      inputField = document.getElementById('todo-input'),
+      taskList = document.getElementById('todo-items'),
+      labelsList = document.getElementById('todo-categories'),
+      deleteButton = document.getElementById('delete-todos');
+
 
   function init(){
 
@@ -181,7 +205,7 @@ var Main = (function() {
     updateToDoList();
 
     // Add categories to UI
-    addCategories();
+    addLabels();
 
     // Hook events for dynamic content
     hookEvents();
@@ -203,52 +227,76 @@ var Main = (function() {
       TaskList.searchTask(inputField.value);
     };
 
-    inputField.blur();
-
   }
 
 
-  function addCategories(){
+  function addLabels(){
     // Remove old elements from UI
-    categoriesList.innerHTML = '';
+    labelsList.innerHTML = '';
     // Get categories
-    var categories = TaskList.getCategories;
+    var labels = TaskList.getLabels;
     // Update list
-    for (var i = 0; i < categories.length; i++) {
-      var category = '<li class="category category-' + categories[i].toString().replace(' ','') + '" data-categorytitle="' + categories[i] + '">' + categories[i] + '</li>';
-      categoriesList.innerHTML += category;
+    for (var i = 0; i < labels.length; i++) {
+      var label = '<li class="category category-' + labels[i].toString().replace(' ','') + '" data-categorytitle="' + labels[i] + '">' + labels[i] + '</li>';
+      labelsList.innerHTML += label;
     }
   }
 
+
   function getSelectedLabels(){
     var selectedToDoLabels = [];
-    var selectedCategories = categoriesList.getElementsByClassName('category-selected');
+    var selectedCategories = labelsList.getElementsByClassName('category-selected');
     for (var i = 0; i < selectedCategories.length; i++) {
       selectedToDoLabels.push(selectedCategories[i].dataset.categorytitle);
     }
     return selectedToDoLabels;
   }
 
+
+
+  // Bind DOM elements
   function hookEvents(){
+
     // Get tasks
     var tasks = TaskList.getTasks();
 
-    // Mark as done
-    var markAsDoneButtons = document.getElementsByClassName('toDo-done');
-    for (var i = 0; i < markAsDoneButtons.length; i++) {
-      markAsDoneButtons[i].onclick = function(){
+    // Select or mark as done
+    var toDoCheckboxes = document.getElementsByClassName('toDo-checkBox');
+    for (var i = 0; i < toDoCheckboxes.length; i++) {
+
+      toDoCheckboxes[i].onclick = function(){
         var index = TaskList.getIndex(this.dataset.todoid);
-        var toDo = new TaskList.task(tasks[index].title, 'labels', this.checked, tasks[index].id);
+        if(this.name === 'toDo-done'){
+          var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, this.checked, tasks[index].id, tasks[index].selected);
+        }else if(this.name === 'toDo-select'){
+          var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, tasks[index].done, tasks[index].id, this.checked);
+        }else{
+          return false;
+        }
         TaskList.addItem(toDo);
       };
+
     }
 
-    // Delete ToDo
-    var deleteButtons = document.getElementsByClassName('toDo-delete');
-    for (var y = 0; y < deleteButtons.length; y++) {
-      deleteButtons[y].onclick = function(){
-        TaskList.removeItem(this.dataset.todoid);
-      };
+
+
+    // Delete ToDo's
+    deleteButton.onclick = function(){
+      var toDoSelect = document.getElementsByName('toDo-select'),
+          toDosToDelete = [];
+
+      for (var i = 0; i < toDoSelect.length; i++) {
+        if(toDoSelect[i].checked){
+          toDosToDelete.push(toDoSelect[i].dataset.todoid);
+        }
+      }
+
+      if(toDosToDelete.length){
+        TaskList.removeItem(toDosToDelete);
+      }else{
+        return false;
+      }
+
     }
 
     // Add category
@@ -259,10 +307,11 @@ var Main = (function() {
         this.classList.toggle('category-selected');
       };
     }
-
   }
 
 
+
+  /* Update the Todo-list in DOM */
   function updateToDoList(filter){
 
     // Remove old tasks from list
@@ -279,7 +328,9 @@ var Main = (function() {
             taskTitle = tasks[i].title,
             taskLabels = tasks[i].labels,
             taskDone = tasks[i].done,
-            checked = '',
+            taskSelected = tasks[i].selected,
+            taskDoneChecked = '',
+            taskSelectedChecked = '',
             filtered = '';
 
         // If we have a filter defined, update 'filtered' (we'll use it for styling)
@@ -291,19 +342,27 @@ var Main = (function() {
 
         if(taskDone){
           taskDone = 'task-done';
-          checked = 'checked';
+          taskDoneChecked = 'checked';
         }else{
           taskDone = '';
         }
 
+        if(taskSelected){
+          taskSelected = 'task-row-selected';
+          taskSelectedChecked = 'checked';
+        }else{
+          taskSelected = '';
+          taskSelectedChecked = '';
+        }
+
         // Create task element and append to DOM
-        var taskItem = '<li class="task-item row '+ taskDone +' '+ filtered +'">'
+        var taskItem = '<li class="task-row row '+ taskDone +' '+ filtered +' '+ taskSelected +'">'
                       +'<div class="col-2-4">'
-                      +'<input type="checkbox" '+ checked +' id="task-'+ taskId +'" class="toDo-done" data-todoid="'+ taskId +'"/>'
-                      +'<label class="task-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
+                      +'<input name="toDo-select" '+ taskSelectedChecked +' type="checkbox" id="task-'+ taskId +'" class="toDo-checkBox" data-todoid="'+ taskId +'"/>'
+                      +'<label class="task-row-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
                       +'</div><div class="col-2-4">'
                       +'<ul class="list-inline list-unstyled task-labels" id="task-labels-'+ taskId +'"></ul>'
-                      +'<button class="toDo-delete pull-right" data-todoid="'+ taskId +'">Delete todo</button>'
+                      +'<label for="task-'+ taskId  +'-done" class="pull-right"><input name="toDo-done" type="checkbox" '+ taskDoneChecked +' class="toDo-done toDo-checkBox" data-todoid="'+ taskId +'" id="task-'+ taskId  +'-done"/> Done</label>'
                       +'</div></li>';
         taskList.innerHTML += taskItem;
 
@@ -318,7 +377,10 @@ var Main = (function() {
       }
     }
 
+    hookEvents();
+
   }
+
 
 
   return {

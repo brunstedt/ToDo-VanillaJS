@@ -96,15 +96,30 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   text-transform: uppercase;
 }
 
+.btn-bordered{
+  background: transparent;
+  border: 1px solid #333;
+  color: #333;
+}
+
+.btn-md{
+  padding: 7px 10px;
+}
+
 .btn-lg{
   padding: 10px 15px;
   font-size: 1.1em;
   font-weight: 100;
 }
 
-.btn-success{
-  background: #57b557;
+.btn-danger{
+  color: #da6363;
+  border-color: #da6363;
+}
+
+.btn-danger:hover{
   color: #fff;
+  background: #da6363;
 }
 
 #todo-submit{
@@ -113,39 +128,41 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   top: 20px;
 }
 
-.task-item{
+.task-row{
   font-weight: 100;
   font-size: 1.25em;
   padding: 15px;
   line-height: 1;
   z-index: 1;
   position: relative;
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  transition: all 0.15s cubic-bezier(.25,.8,.25,1);
+  overflow-x: hidden;
 }
 
-.task-item:hover{
-  background: #fff !important;
-  z-index: 2;
-  box-shadow: 0 2px 2px 3px rgba(0,0,0,.05);
-  transform: scale(1.01);
-}
-
-.task-item:nth-of-type(even){
+.task-row:nth-of-type(even){
   background: #f9f9f9;
 }
 
-.task-title{
+
+.task-row:hover{
+  background: #fff !important;
+  z-index: 2;
+  box-shadow: 0 2px 2px 3px rgba(0,0,0,.05);
+  transform: scale(1.005);
+}
+
+.task-row-title{
   margin-left: 10px;
   cursor: pointer;
 }
 
 .task-done{
-  background: #e7f1e7 !important;
-  color: #758075;
+  background: #edf7ed !important;
+  color: #337733;
 }
 
 .task-done:hover{
-  background: #f2fff2 !important;
+  background: #f6fdf6 !important;
   box-shadow: 0 2px 2px 3px rgba(176,195,176,.15);
 }
 
