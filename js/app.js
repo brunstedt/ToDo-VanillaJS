@@ -515,10 +515,10 @@ var Main = (function() {
         // Build the actual DOM element as a html string, then append it to the DOM.
         var svgCheck = '<svg data-todoid="'+ taskId +'" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="task-mark-as-done" x="0px" y="0px" viewBox="0 0 363.025 363.024" xml:space="preserve"><g><g><g><path d="M181.512,363.024C81.43,363.024,0,281.601,0,181.513C0,81.424,81.43,0,181.512,0     c100.083,0,181.513,81.424,181.513,181.513C363.025,281.601,281.595,363.024,181.512,363.024z M181.512,11.71     C87.88,11.71,11.71,87.886,11.71,181.513s76.17,169.802,169.802,169.802c93.633,0,169.803-76.175,169.803-169.802  S275.145,11.71,181.512,11.71z"/></g></g><g><polygon points="147.957,258.935 83.068,194.046 91.348,185.767 147.957,242.375 271.171,119.166  279.451,127.445"/></g></g></svg>';
         var taskItem = '<li class="task-row row '+ taskDone +' '+ filtered +' '+ taskSelected +'" data-todoid="'+ taskId +'">'
-                      +'<div class="col-2-4">'
+                      +'<div class="col-2-4 flex-vertical-center-children">'
                       +'<input name="toDo-select" '+ taskSelectedChecked +' type="checkbox" id="task-'+ taskId +'" class="toDo-checkBox hidden" data-todoid="'+ taskId +'"/>'
                       +'<label class="task-row-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
-                      +'</div><div class="col-2-4">'
+                      +'</div><div class="col-2-4 flex-vertical-center-children">'
                       +'<ul class="list-inline list-unstyled task-labels" id="task-labels-'+ taskId +'"></ul>'
                       +'<input name="toDo-done" data-todoid="'+ taskId +'" type="checkbox" '+ taskDoneChecked +' class="toDo-done toDo-checkBox hidden" data-todoid="'+ taskId +'" id="task-'+ taskId  +'-done"/><label for="task-'+ taskId  +'-done" class="pull-right">'+ svgCheck +'</label>'
                       +'</div></li>';
@@ -530,7 +530,7 @@ var Main = (function() {
         var taskLabelsList = document.getElementById('task-labels-'+taskId);
         var taskLabelsStr = '';
         for (var z = 0; z < taskLabels.length; z++) {
-          taskLabelsStr += '<li class="label label-sm label-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
+          taskLabelsStr += '<li class="label label-sm label-selected label-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
         }
 
         taskLabelsList.innerHTML += taskLabelsStr;

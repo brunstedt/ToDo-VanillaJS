@@ -53,6 +53,12 @@ body{
   display: none;
 }
 
+.flex-vertical-center-children{
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;;
+  align-items: center;
+}
 
 
 
@@ -241,27 +247,27 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   cursor: pointer;
 }
 
-.task-mark-as-done path{
-  fill: #d0d0d0;
-  pointer-events: none;
-}
-
+.task-mark-as-done path,
 .task-mark-as-done polygon{
   fill: #d0d0d0;
   pointer-events: none;
 }
 
-.task-done .task-mark-as-done path{
-  fill: #52bb52;
+.task-mark-as-done:hover path,
+.task-mark-as-done:hover polygon{
+  fill: #333;
   pointer-events: none;
 }
 
+.task-done .task-mark-as-done path,
 .task-done .task-mark-as-done polygon{
   fill: #52bb52;
-  pointer-events: none;
 }
 
-
+.task-done .task-mark-as-done:hover path,
+.task-done .task-mark-as-done:hover polygon{
+  fill: #da6363;
+}
 
 
 
@@ -273,7 +279,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   border-radius: 5px;
   cursor: pointer;
   padding: 7px 10px;
-  border: 1px solid transparent;
+  border: 1px solid #555;
 }
 
 .label-sm{
@@ -282,49 +288,56 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 }
 
 .label-selected{
-  border: 1px solid #555;
+  background: #555;
+  color: #fff;
 }
 
 .label-bugg{
-  background: #da6363;
+  color: #da6363;
+  border-color: #da6363;
 }
 
 .label-bugg.label-selected{
   background: #ff6161;
-  box-shadow: 0 0 5px 1px rgba(255,97,97,1);
-  border: 1px solid #ea4f4f;
+  color: #fff;
 }
 
 .label-defect{
-  background: #efa541;
+  border-color: #efa541;
+  color: #efa541;
 }
 
 .label-defect.label-selected{
-  background: #ffc95e;
-  box-shadow: 0 0 5px 1px rgba(255,201,94,1);
-  border: 1px solid #f1ba4e;
+  background: #efa541;
+  color: #fff;
 }
 
 .label-featurerequest{
-  background: #985d98;
+  border-color: #985d98;
+  color: #985d98;
 }
 
 .label-featurerequest.label-selected{
-  background: #;
+  background: #985d98;
+  color: #fff;
 }
 
 .label-inprogress{
-  background: #57b557;
+  border-color: #57b557;
+  color: #57b557;
 }
 
 .label-inprogress.label-selected{
-  background: #;
+  background: #57b557;
+  color: #fff;
 }
 
 .label-toprocess{
-  background: grey;
+  border-color: grey;
+  color: grey;
 }
 
 .label-toprocess.label-selected{
-  background: #;
+  background: grey;
+  color: #fff;
 }
