@@ -54,9 +54,13 @@ body{
 }
 
 .flex-vertical-center-children{
-  flex-direction: row;
+  display: -webkit-flex;
   display: flex;
-  justify-content: space-between;;
+  -webkit-flex-direction: row
+  flex-direction: row;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-align-items: center;
   align-items: center;
 }
 
