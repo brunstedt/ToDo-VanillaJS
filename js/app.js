@@ -113,7 +113,7 @@ var TaskList = (function() {
       var searchHits = [];
       if(taskList !== null){
         for (var i = 0; i < taskList.length; i++) {
-          var taskTitle = taskList[i].title.toString().indexOf(searchTerm);
+          var taskTitle = taskList[i].title.toString().toLowerCase().indexOf(searchTerm.toLowerCase());
           if(taskTitle >= 0){
             searchHits.push(taskList[i].id);
           }
@@ -225,7 +225,7 @@ var Main = (function() {
     var labels = TaskList.getLabels;
     // Update list
     for (var i = 0; i < labels.length; i++) {
-      var label = '<li class="category category-' + labels[i].toString().replace(' ','') + '" data-categorytitle="' + labels[i] + '">' + labels[i] + '</li>';
+      var label = '<li class="label label-' + labels[i].toString().replace(' ','') + '" data-labeltitle="' + labels[i] + '">' + labels[i] + '</li>';
       labelsList.innerHTML += label;
     }
   }
@@ -234,10 +234,10 @@ var Main = (function() {
   // Get and return the currently select task-labels
   function getSelectedLabels(){
     var selectedToDoLabels = [],
-        selectedCategories = labelsList.getElementsByClassName('category-selected');
+        selectedCategories = labelsList.getElementsByClassName('label-selected');
 
     for (var i = 0; i < selectedCategories.length; i++) {
-      selectedToDoLabels.push(selectedCategories[i].dataset.categorytitle);
+      selectedToDoLabels.push(selectedCategories[i].dataset.labeltitle);
     }
 
     return selectedToDoLabels;
@@ -262,6 +262,13 @@ var Main = (function() {
     // Bind input field: filter funtionality
     inputField.onkeyup = function(){
       TaskList.searchTask(inputField.value);
+
+      // Toggle state of submit button
+      if(this.value.trim().length){
+        submitBtn.classList.remove('btn-disabled');
+      }else{
+        submitBtn.classList.add('btn-disabled');
+      }
     };
 
     // Bind 'select all tasks'-button
@@ -392,11 +399,11 @@ var Main = (function() {
     }
 
     // Bind label buttons
-    var categoryList = document.getElementById('todo-labels');
-    var categoryButtons = categoryList.getElementsByClassName('category');
-    for (var x = 0; x < categoryButtons.length; x++) {
-      categoryButtons[x].onclick = function(){
-        this.classList.toggle('category-selected');
+    var labelList = document.getElementById('todo-labels');
+    var labelButtons = labelList.getElementsByClassName('label');
+    for (var x = 0; x < labelButtons.length; x++) {
+      labelButtons[x].onclick = function(){
+        this.classList.toggle('label-selected');
       };
     }
 
@@ -523,7 +530,7 @@ var Main = (function() {
         var taskLabelsList = document.getElementById('task-labels-'+taskId);
         var taskLabelsStr = '';
         for (var z = 0; z < taskLabels.length; z++) {
-          taskLabelsStr += '<li class="category category-sm category-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
+          taskLabelsStr += '<li class="label label-sm label-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
         }
 
         taskLabelsList.innerHTML += taskLabelsStr;

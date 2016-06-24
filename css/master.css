@@ -173,10 +173,10 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 
 
+
 /*
   Tasks
 */
-
 .task-row{
   font-weight: 100;
   font-size: 1.25em;
@@ -266,9 +266,9 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 
 /*
-  Category tags
+  label tags
 */
-.category{
+.label{
   color: #fff;
   border-radius: 5px;
   cursor: pointer;
@@ -276,55 +276,55 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   border: 1px solid transparent;
 }
 
-.category-sm{
+.label-sm{
   padding: 2px 7px;
   font-size: .7em;
 }
 
-.category-selected{
+.label-selected{
   border: 1px solid #555;
 }
 
-.category-bugg{
+.label-bugg{
   background: #da6363;
 }
 
-.category-bugg.category-selected{
+.label-bugg.label-selected{
   background: #ff6161;
   box-shadow: 0 0 5px 1px rgba(255,97,97,1);
   border: 1px solid #ea4f4f;
 }
 
-.category-defect{
+.label-defect{
   background: #efa541;
 }
 
-.category-defect.category-selected{
+.label-defect.label-selected{
   background: #ffc95e;
   box-shadow: 0 0 5px 1px rgba(255,201,94,1);
   border: 1px solid #f1ba4e;
 }
 
-.category-featurerequest{
+.label-featurerequest{
   background: #985d98;
 }
 
-.category-featurerequest.category-selected{
+.label-featurerequest.label-selected{
   background: #;
 }
 
-.category-inprogress{
+.label-inprogress{
   background: #57b557;
 }
 
-.category-inprogress.category-selected{
+.label-inprogress.label-selected{
   background: #;
 }
 
-.category-toprocess{
+.label-toprocess{
   background: grey;
 }
 
-.category-toprocess.category-selected{
+.label-toprocess.label-selected{
   background: #;
 }
