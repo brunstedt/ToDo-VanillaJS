@@ -283,16 +283,20 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 .task-mark-as-done path{
   fill: #d0d0d0;
+  pointer-events: none;
 }
 
 .task-mark-as-done polygon{
   fill: #d0d0d0;
+  pointer-events: none;
 }
 
 .task-done .task-mark-as-done path{
   fill: #52bb52;
+  pointer-events: none;
 }
 
 .task-done .task-mark-as-done polygon{
   fill: #52bb52;
-} 
+  pointer-events: none;
+}

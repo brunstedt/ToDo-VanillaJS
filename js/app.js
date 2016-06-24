@@ -299,7 +299,7 @@ var Main = (function() {
     for (var i = 0; i < taskRows.length; i++) {
       taskRows[i].onclick = function(e){
         // Catch if the user clicked the 'mark as done' (child in .task-row)
-        if(e.target.classList.contains('task-mark-as-done')){
+        if(e.target.classList.contains('task-mark-as-done') || e.target.classList.contains('toDo-done')){
             var task = this.dataset.todoid;
             var checkbox = document.getElementById('task-'+ task +'-done');
 
@@ -313,9 +313,6 @@ var Main = (function() {
             checkbox.dispatchEvent(event);
 
         }else{
-
-          console.log('clicked on row')
-
           var taskId = this.dataset.todoid;
           var checkBox = document.getElementById('task-' + taskId);
 
@@ -402,10 +399,8 @@ var Main = (function() {
     for (var i = 0; i < checkboxes.length; i++) {
       checkboxes[i].onchange = function(){
         if(this.name === 'toDo-select'){
-          console.log('select-changed')
           selectTaskEvent(this);
         }else if(this.name === 'toDo-done'){
-          console.log('tododone changed')
           markAsDoneEvent(this);
         }else{
           return false;
@@ -422,8 +417,11 @@ var Main = (function() {
       TaskList.addItem(toDo);
 
       var rowSelected = false;
-      if(task.checked){
-        rowSelected = true;
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].selected === true){
+          rowSelected = true;
+          break;
+        }
       }
 
       if(rowSelected){
