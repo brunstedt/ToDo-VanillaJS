@@ -300,7 +300,6 @@ var Main = (function() {
       taskRows[i].onclick = function(e){
         // Catch if the user clicked the 'mark as done' (child in .task-row)
         if(e.target.classList.contains('task-mark-as-done')){
-          console.log('click!')
             var task = this.dataset.todoid;
             var checkbox = document.getElementById('task-'+ task +'-done');
 
@@ -312,7 +311,10 @@ var Main = (function() {
 
             var event = new Event('change');
             checkbox.dispatchEvent(event);
+
         }else{
+
+          console.log('clicked on row')
 
           var taskId = this.dataset.todoid;
           var checkBox = document.getElementById('task-' + taskId);
@@ -366,7 +368,7 @@ var Main = (function() {
       if(toDosToDelete.length){
         TaskList.removeItem(toDosToDelete);
 
-        // If all tasks have been removed, set state of buttons to disabled. Eles trigger event.
+        // If all tasks have been removed, set state of buttons to disabled.
         var checkboxes = document.getElementsByName('toDo-select');
         if(checkboxes.length){
           for (var i = 0; i < checkboxes.length; i++) {
@@ -400,8 +402,10 @@ var Main = (function() {
     for (var i = 0; i < checkboxes.length; i++) {
       checkboxes[i].onchange = function(){
         if(this.name === 'toDo-select'){
+          console.log('select-changed')
           selectTaskEvent(this);
         }else if(this.name === 'toDo-done'){
+          console.log('tododone changed')
           markAsDoneEvent(this);
         }else{
           return false;
@@ -436,7 +440,6 @@ var Main = (function() {
     function markAsDoneEvent(task){
       var tasks = TaskList.getTasks();
       var index = TaskList.getIndex(task.dataset.todoid);
-      console.log(tasks[index])
       var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, task.checked, tasks[index].id, tasks[index].selected);
       TaskList.addItem(toDo);
     }
