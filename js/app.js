@@ -15,7 +15,9 @@ var TaskList = (function() {
     }
 
     return taskList;
+
   }
+
 
   // Add or update ToDo
   function add(taskItem){
@@ -91,6 +93,7 @@ var TaskList = (function() {
     Main.init();
   }
 
+
   /* Find index for specific task by id. Since vanilla is the flavour, we do some
     looping to find the task. Would normally prefer _filter / $.inArray / arr.find
   */
@@ -149,6 +152,7 @@ var TaskList = (function() {
 
 
 
+
 var FormField = (function() {
 
   // Validate the input field
@@ -188,6 +192,7 @@ var FormField = (function() {
 
 
 
+
 var Main = (function() {
 
   // DOM elements
@@ -210,6 +215,7 @@ var Main = (function() {
     // Hook events for dynamic content
     hookEvents();
   }
+
 
   // Add all the labels to the DOM
   function addLabels(){
@@ -246,7 +252,6 @@ var Main = (function() {
       FormField.postItem();
     };
 
-
     // Bind input field: submit by [ENTER]
     inputField.onkeypress = function(e){
       if(e.keyCode === 13){
@@ -254,20 +259,27 @@ var Main = (function() {
       }
     };
 
-
     // Bind input field: filter funtionality
     inputField.onkeyup = function(){
       TaskList.searchTask(inputField.value);
     };
 
-
     // Bind 'select all tasks'-button
     selectAllButton.onclick = function(){
       var checkboxes = document.getElementsByName('toDo-select'),
+          checkedBoxes = 0,
           checked = 'checked',
           state = true;
 
-      if(checkboxes.length && checkboxes[0].checked){
+      // Check how many tasks that is currently selected
+      for (var i = 0; i < checkboxes.length; i++) {
+        if(checkboxes[i].checked === true){
+          checkedBoxes++;
+        }
+      }
+
+      if(checkedBoxes >= checkboxes.length){
+        // If all boxes are seleced, deselect them
         checked = '';
         state = false;
       }
@@ -275,6 +287,7 @@ var Main = (function() {
       for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].setAttribute('checked', checked);
         checkboxes[i].checked = state;
+
         // Trigger event
         var event = new Event('change');
         checkboxes[i].dispatchEvent(event);
@@ -291,7 +304,6 @@ var Main = (function() {
         }
       }
     }
-
 
     // Bind click on task row to toggle select
     var taskRows = document.getElementsByClassName('task-row');
@@ -330,7 +342,6 @@ var Main = (function() {
       }
     }
 
-
     // Bind 'mark as done'-button (mark all selected tasks as done at once)
     markSelectedAsDone.onclick = function(){
       var toDoSelect = document.getElementsByName('toDo-select'),
@@ -348,8 +359,6 @@ var Main = (function() {
             }
           }
     }
-
-
 
     // Bind delete-button (delete all selected tasks at once)
     deleteButton.onclick = function(){
@@ -377,12 +386,10 @@ var Main = (function() {
           markSelectedAsDone.classList.add('btn-disabled');
         }
 
-
       }else{
         return false;
       }
     }
-
 
     // Bind label buttons
     var categoryList = document.getElementById('todo-labels');
@@ -392,7 +399,6 @@ var Main = (function() {
         this.classList.toggle('category-selected');
       };
     }
-
 
     // Bind "done" and "select" checkboxes
     var checkboxes = document.getElementsByClassName('toDo-checkBox');
@@ -407,7 +413,6 @@ var Main = (function() {
         }
       }
     }
-
 
     // Toggle states of multi-choice buttons
     function selectTaskEvent(task){
@@ -433,7 +438,6 @@ var Main = (function() {
       }
     }
 
-
     // Save task as marked as done (triggered when checkbox is ticked)
     function markAsDoneEvent(task){
       var tasks = TaskList.getTasks();
@@ -442,7 +446,6 @@ var Main = (function() {
       TaskList.addItem(toDo);
     }
   }
-
 
   function updateToDoList(filter){
     /*
@@ -453,7 +456,6 @@ var Main = (function() {
       to filter. The filter will apply a class to tasks with a matching id
       from the passed argument object.
     */
-
 
     // Remove old elements from list
     taskList.innerHTML = '';
@@ -503,7 +505,6 @@ var Main = (function() {
           taskSelectedChecked = '';
         }
 
-
         // Build the actual DOM element as a html string, then append it to the DOM.
         var svgCheck = '<svg data-todoid="'+ taskId +'" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="task-mark-as-done" x="0px" y="0px" viewBox="0 0 363.025 363.024" xml:space="preserve"><g><g><g><path d="M181.512,363.024C81.43,363.024,0,281.601,0,181.513C0,81.424,81.43,0,181.512,0     c100.083,0,181.513,81.424,181.513,181.513C363.025,281.601,281.595,363.024,181.512,363.024z M181.512,11.71     C87.88,11.71,11.71,87.886,11.71,181.513s76.17,169.802,169.802,169.802c93.633,0,169.803-76.175,169.803-169.802  S275.145,11.71,181.512,11.71z"/></g></g><g><polygon points="147.957,258.935 83.068,194.046 91.348,185.767 147.957,242.375 271.171,119.166  279.451,127.445"/></g></g></svg>';
         var taskItem = '<li class="task-row row '+ taskDone +' '+ filtered +' '+ taskSelected +'" data-todoid="'+ taskId +'">'
@@ -531,7 +532,7 @@ var Main = (function() {
 
     }
 
-    // Re-do our bindings after our new elements has been added to the DOM.
+    // Re-do the bindings after our new elements has been added to the DOM.
     hookEvents();
 
   }
@@ -543,6 +544,7 @@ var Main = (function() {
     updateToDoList : updateToDoList,
     getSelectedLabels : getSelectedLabels
   };
+
 })();
 
 

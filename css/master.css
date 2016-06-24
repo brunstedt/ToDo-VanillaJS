@@ -14,7 +14,33 @@ body{
     outline: none;
 }
 
-/* HELPERS */
+#wrapper{
+  margin: 0 auto;
+  padding: 15px 0;
+  width: 960px;
+  position: relative;
+}
+
+#todo-items{
+  margin-top: 0;
+  border-top: 1px solid #eee;
+}
+
+#todo-input{
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 1.5em;
+  border-radius: 5px;
+  border: 1px solid #dcdada;
+  box-shadow: inset 0px 2px 2px -1px rgba(0,0,0,.2);
+}
+
+
+
+
+/*
+  Helper classes
+*/
 .pull-right{
   float: right;
 }
@@ -27,7 +53,12 @@ body{
   display: none;
 }
 
-/* COLUMNS */
+
+
+
+/*
+  Columns
+*/
 div[class*='col-'], div[class^='col-']{
   float: left;
 }
@@ -57,6 +88,13 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   float: left;
 }
 
+
+
+
+
+/*
+  Lists
+*/
 .list-unstyled{
   list-style-type: none;
   display: inline-block;
@@ -77,26 +115,10 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 
 
-#wrapper{
-  margin: 0 auto;
-  padding: 15px 0;
-  width: 960px;
-  position: relative;
-}
 
-#todo-items{
-  margin-top: 0;
-  border-top: 1px solid #eee;
-}
-
-#todo-input{
-  width: 100%;
-  padding: 10px 15px;
-  font-size: 1.5em;
-  border-radius: 5px;
-  border: 1px solid #dcdada;
-  box-shadow: inset 0px 2px 2px -1px rgba(0,0,0,.2);
-}
+/*
+  Buttons
+*/
 
 .btn{
   border-radius: 5px;
@@ -148,6 +170,12 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   color: #fff;
   background: #57b557;
 }
+
+
+
+/*
+  Tasks
+*/
 
 .task-row{
   font-weight: 100;
@@ -206,7 +234,40 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   pointer-events: none;
 }
 
-/* Category tag themes */
+.task-mark-as-done{
+  /* Checkmark SVG */
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.task-mark-as-done path{
+  fill: #d0d0d0;
+  pointer-events: none;
+}
+
+.task-mark-as-done polygon{
+  fill: #d0d0d0;
+  pointer-events: none;
+}
+
+.task-done .task-mark-as-done path{
+  fill: #52bb52;
+  pointer-events: none;
+}
+
+.task-done .task-mark-as-done polygon{
+  fill: #52bb52;
+  pointer-events: none;
+}
+
+
+
+
+
+/*
+  Category tags
+*/
 .category{
   color: #fff;
   border-radius: 5px;
@@ -244,7 +305,6 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   border: 1px solid #f1ba4e;
 }
 
-
 .category-featurerequest{
   background: #985d98;
 }
@@ -267,36 +327,4 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 .category-toprocess.category-selected{
   background: #;
-}
-
-.toDo-done{
-  width: 16px;
-  height: 16px;
-}
-
-/* Checkmark SVG */
-.task-mark-as-done{
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-}
-
-.task-mark-as-done path{
-  fill: #d0d0d0;
-  pointer-events: none;
-}
-
-.task-mark-as-done polygon{
-  fill: #d0d0d0;
-  pointer-events: none;
-}
-
-.task-done .task-mark-as-done path{
-  fill: #52bb52;
-  pointer-events: none;
-}
-
-.task-done .task-mark-as-done polygon{
-  fill: #52bb52;
-  pointer-events: none;
 }
