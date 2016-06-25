@@ -201,11 +201,11 @@ var FormField = (function() {
       var labels = editTask[0].getElementsByClassName('task-labels')[0];
 
       if(validateInputField(taskTitle)){
-        var selectedToDoLabels = Main.getSelectedLabels(labels);
+        var updatedToDoLabels = Main.getSelectedLabels(labels);
         var tasks = TaskList.getTasks();
         var index = TaskList.getIndex(taskTitle.dataset.todoid);
-        var toDo = new TaskList.task(taskTitle.value, selectedToDoLabels, tasks[index].done, tasks[index].id, tasks[index].selected);
-        TaskList.addItem(toDo);
+        var updatedToDo = new TaskList.task(taskTitle.value, updatedToDoLabels, tasks[index].done, tasks[index].id, tasks[index].selected);
+        TaskList.addItem(updatedToDo);
       }
     }
 
@@ -319,26 +319,26 @@ var Main = (function() {
         state = false;
       }
 
-      for (var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].setAttribute('checked', checked);
-        checkboxes[i].checked = state;
+      for (var checkboxesIndex = 0; checkboxesIndex < checkboxes.length; checkboxesIndex++) {
+        checkboxes[checkboxesIndex].setAttribute('checked', checked);
+        checkboxes[checkboxesIndex].checked = state;
 
         // Trigger event
         var event = new Event('change');
-        checkboxes[i].dispatchEvent(event);
+        checkboxes[checkboxesIndex].dispatchEvent(event);
       }
 
       var taskRows = document.getElementsByClassName('task-row');
       if(state){
-        for (var i = 0; i < taskRows.length; i++) {
-          taskRows[i].classList.add('task-row-selected');
+        for (var taskRowsAddClassIndex = 0; taskRowsAddClassIndex < taskRows.length; taskRowsAddClassIndex++) {
+          taskRows[taskRowsAddClassIndex].classList.add('task-row-selected');
         }
       }else{
-        for (var i = 0; i < taskRows.length; i++) {
-          taskRows[i].classList.remove('task-row-selected');
+        for (var taskRowsRemoveClassIndex = 0; taskRowsRemoveClassIndex < taskRows.length; taskRowsRemoveClassIndex++) {
+          taskRows[taskRowsRemoveClassIndex].classList.remove('task-row-selected');
         }
       }
-    }
+    };
 
     // Bind click on task row to toggle select / mark as done / edit task
     var taskRows = document.getElementsByClassName('task-row');
@@ -379,11 +379,11 @@ var Main = (function() {
             }
 
           // Trigger event
-          var event = new Event('change');
-          checkBox.dispatchEvent(event);
+          var taskCheckEvent = new Event('change');
+          checkBox.dispatchEvent(taskCheckEvent);
 
         }
-      }
+      };
     }
 
     // Bind 'mark as done'-button (mark all selected tasks as done at once)
@@ -402,7 +402,7 @@ var Main = (function() {
               toDoSelect[i].dispatchEvent(event);
             }
           }
-    }
+    };
 
     // Bind delete-button (delete all selected tasks at once)
     deleteButton.onclick = function(){
@@ -433,7 +433,7 @@ var Main = (function() {
       }else{
         return false;
       }
-    }
+    };
 
     // Bind label buttons
     var labelButtons = document.getElementsByClassName('label');
@@ -454,7 +454,7 @@ var Main = (function() {
         }else{
           return false;
         }
-      }
+      };
     }
 
     // Toggle states of multi-choice buttons
@@ -492,8 +492,7 @@ var Main = (function() {
   }
 
   function toggleEditTask(task){
-    var editButton = task.getElementsByClassName('btn-edit-task')[0],
-        saveButton = task.getElementsByClassName('btn-save-task')[0],
+    var saveButton = task.getElementsByClassName('btn-save-task')[0],
         cancelButton = task.getElementsByClassName('btn-cancel-task')[0],
         tasksEditing = document.getElementsByClassName('task-edit'),
         taskLabels = document.getElementsByClassName('task-label');
@@ -524,14 +523,14 @@ var Main = (function() {
     cancelButton.onclick = function(){
       task.classList.remove('task-edit');
       hookEvents();
-    }
+    };
 
     // Save button
     saveButton.onclick = function(){
       FormField.postItem(task);
       task.classList.remove('task-edit');
       hookEvents();
-    }
+    };
 
     // Unbind click event on the row that is being edited
     var taskRows = document.getElementsByClassName('task-edit');

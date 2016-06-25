@@ -311,6 +311,16 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   box-shadow: 0 2px 2px 3px rgba(176,195,176,.15);
 }
 
+.task-done .label{
+  border-color: #52bb52;
+  color: #52bb52;
+}
+
+.task-done .label.label-selected{
+  background: #52bb52;
+  color: #fff;
+}
+
 .task-filtered{
   opacity: .2;
   pointer-events: none;
