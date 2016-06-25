@@ -121,7 +121,6 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 .row{
   width: 100%;
-  float: left;
 }
 
 
@@ -451,4 +450,15 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 .label-toprocess.label-selected{
   background: grey;
   color: #fff;
+}
+
+
+/*
+  Error messages
+*/
+#error-localStorageNotAvailable{
+  background: #FFE7A1;
+  color: #50462A;
+  padding: 5px 0;
+  margin-bottom: 15px;
 }

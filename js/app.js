@@ -8,11 +8,19 @@ var TaskList = (function() {
 
   // Get tasks from local storage
   function get(){
-    var storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    if(typeof localStorage !== 'undefined'){
 
-    if(storedTasks !== null){
-      taskList = storedTasks;
+      var storedTasks = JSON.parse(localStorage.getItem("tasks"));
+
+      if(typeof storedTasks !== 'undefined'){
+        taskList = storedTasks;
+      }
+
+    }else{
+      // Local storage is not available, display message.
+      document.getElementById('error-localStorageNotAvailable').classList.remove('hidden');
     }
+
     return taskList;
 
   }

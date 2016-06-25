@@ -6,20 +6,25 @@
     <title>Things to do</title>
   </head>
   <body>
-    <div id="wrapper">
+    
+    <!-- Error message: local storage not available -->
+    <div class="row text-center hidden" id="error-localStorageNotAvailable">
+      <p>Warning: Local storage is not available, your tasks will not be saved.</p>
+    </div>
 
-      <!--- Input / search field--->
+    <div id="wrapper">
+      <!-- Input / search field -->
       <div class="row">
         <input type="text" id="todo-input" class="js-newTask" placeholder="Search or add item" />
         <button class="btn btn-lg btn-success js-newTask disabled" id="todo-submit">Add task</button>
       </div>
 
-      <!--- ToDo labels --->
+      <!-- ToDo labels -->
       <div class="row">
         <ul class="list-inline list-unstyled" id="todo-labels"></ul><p class="pull-right text-danger hidden" id="error-notitle">Oops, a title would be nice!</p>
       </div>
 
-      <!--- ToDo list actions --->
+      <!-- ToDo list actions -->
       <div class="row">
         <ul class="list-inline list-unstyled" id="todo-list-actions">
           <li><button id="selectAll" class="btn btn-md btn-bordered disabled">Select all tasks</button></li>
@@ -28,7 +33,7 @@
         </ul>
       </div>
 
-      <!--- ToDo list --->
+      <!-- ToDo list -->
       <div class="row">
         <ul id="todo-items" class="list-unstyled row"></ul>
       </div>
