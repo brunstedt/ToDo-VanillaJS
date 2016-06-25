@@ -4,7 +4,7 @@ var TaskList = (function() {
   var taskList = [];
 
   // Array of categories
-  var taskCategories = ['bugg', 'defect', 'feature request', 'in progress', 'to process'];
+  var taskCategories = ['bug', 'defect', 'feature request', 'in progress', 'to process'];
 
   // Get tasks from local storage
   function get(){
@@ -318,23 +318,23 @@ var Main = (function() {
         state = false;
       }
 
-      for (var checkboxesIndex = 0; checkboxesIndex < checkboxes.length; checkboxesIndex++) {
-        checkboxes[checkboxesIndex].setAttribute('checked', checked);
-        checkboxes[checkboxesIndex].checked = state;
+      for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].setAttribute('checked', checked);
+        checkboxes[i].checked = state;
 
         // Trigger event
         var event = new Event('change');
-        checkboxes[checkboxesIndex].dispatchEvent(event);
+        checkboxes[i].dispatchEvent(event);
       }
 
       var taskRows = document.getElementsByClassName('task-row');
       if(state){
-        for (var taskRowsAddClassIndex = 0; taskRowsAddClassIndex < taskRows.length; taskRowsAddClassIndex++) {
-          taskRows[taskRowsAddClassIndex].classList.add('task-row-selected');
+        for (var i = 0; i < taskRows.length; i++) {
+          taskRows[i].classList.add('task-row-selected');
         }
       }else{
-        for (var taskRowsRemoveClassIndex = 0; taskRowsRemoveClassIndex < taskRows.length; taskRowsRemoveClassIndex++) {
-          taskRows[taskRowsRemoveClassIndex].classList.remove('task-row-selected');
+        for (var i = 0; i < taskRows.length; i++) {
+          taskRows[i].classList.remove('task-row-selected');
         }
       }
     };

@@ -398,13 +398,13 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   color: #fff;
 }
 
-.label-bugg{
+.label-bug{
   color: #da6363;
   border-color: #da6363;
 }
 
-.label-bugg:hover,
-.label-bugg.label-selected{
+.label-bug:hover,
+.label-bug.label-selected{
   background: #da6363;
   color: #fff;
 }
