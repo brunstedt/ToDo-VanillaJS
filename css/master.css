@@ -4,6 +4,16 @@ body{
   font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+textarea{
+  /* Firefox */
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+input.has-error{
+  border-color: #da6363 !important;
+  box-shadow: inset 0px 2px 2px -1px rgba(218,99,99,.7) !important;
+}
+
 *{
   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
   -moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -64,6 +74,22 @@ body{
   align-items: center;
 }
 
+.disabled{
+  pointer-events: none;
+  opacity: .3;
+}
+
+.text-center{
+  text-align: center;
+}
+
+.text-faded{
+  opacity: .5;
+}
+
+.text-danger{
+  color: #da6363;
+}
 
 
 /*
@@ -113,7 +139,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 .list-inline li{
   float: left;
-  margin: 0 5px;
+  margin: 5px 5px 0 0;
 }
 
 .list-inline li:first-of-type{
@@ -121,6 +147,14 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 }
 .list-inline li:last-of-type{
   margin-right: 0;
+}
+
+#todo-labels{
+  margin-top: 5px;
+}
+
+#todo-list-actions{
+  margin-bottom: 10px;
 }
 
 
@@ -135,11 +169,6 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   border: none;
   cursor: pointer;
   text-transform: uppercase;
-}
-
-.btn-disabled{
-  pointer-events: none;
-  opacity: .3;
 }
 
 .btn-bordered{
@@ -173,12 +202,48 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   background: #da6363;
 }
 
+.btn-success{
+  background: #57b557;
+  color: #fff;
+}
+
+.btn-success:hover{
+  background: #61ce69;
+  color: #fff;
+}
+
+.btn-bordered.btn-success{
+  background: transparent;
+  border: 1px solid #57b557;
+  color: #57b557;
+}
+
+.btn-bordered.btn-success:hover{
+  background-color: #57b557;
+  color: #fff;
+}
+
+.btn-bordered.btn-grey{
+  background: transparent;
+  color: #a9a9a9;
+  border-color: #a9a9a9;
+}
+
+.btn-bordered.btn-grey:hover{
+  color: #fff;
+  background: #a9a9a9;
+}
+
+.btn-save-task,
+.btn-cancel-task,
+.btn-edit-task{
+  margin: 5px 10px 0 0;
+}
+
 #todo-submit{
   position: absolute;
   right: 5px;
   top: 20px;
-  color: #fff;
-  background: #57b557;
 }
 
 
@@ -189,6 +254,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 */
 .task-row{
   font-weight: 100;
+  background: #fff;
   font-size: 1.25em;
   padding: 15px;
   line-height: 1;
@@ -208,7 +274,6 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   background: #fff !important;
   z-index: 2;
   box-shadow: 0 2px 2px 3px rgba(0,0,0,.05);
-  transform: scale(1.005);
 }
 
 .task-row-selected{
@@ -217,6 +282,13 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
 
 .task-row-title{
   cursor: pointer;
+  font-weight: 100;
+  font-size: 1em;
+  line-height: 1;
+  border: none;
+  background: transparent;
+  width: 100%;
+  resize: none;
 }
 
 .task-done{
@@ -273,6 +345,26 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   fill: #da6363;
 }
 
+.task-edit{
+  transform: scale(1.05);
+  z-index: 5;
+  box-shadow: 0 2px 2px 3px rgba(0,0,0,.05);
+}
+
+.task-row.task-edit .btn-save-task,
+.task-row.task-edit .btn-cancel-task{
+  display: inline-block;
+}
+
+.task-row.task-edit .btn-edit-task{
+  display: block;
+}
+
+.task-row .btn-save-task,
+.task-row .btn-cancel-task,
+.task-row.task-edit .btn-edit-task{
+  display: none;
+}
 
 
 /*
@@ -301,8 +393,9 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   border-color: #da6363;
 }
 
+.label-bugg:hover,
 .label-bugg.label-selected{
-  background: #ff6161;
+  background: #da6363;
   color: #fff;
 }
 
@@ -311,6 +404,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   color: #efa541;
 }
 
+.label-defect:hover,
 .label-defect.label-selected{
   background: #efa541;
   color: #fff;
@@ -321,6 +415,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   color: #985d98;
 }
 
+.label-featurerequest:hover,
 .label-featurerequest.label-selected{
   background: #985d98;
   color: #fff;
@@ -331,6 +426,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   color: #57b557;
 }
 
+.label-inprogress:hover,
 .label-inprogress.label-selected{
   background: #57b557;
   color: #fff;
@@ -341,6 +437,7 @@ div[class*='col-']:last-of-type, div[class^='col-']:last-of-type{
   color: grey;
 }
 
+.label-toprocess:hover,
 .label-toprocess.label-selected{
   background: grey;
   color: #fff;

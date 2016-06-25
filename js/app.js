@@ -13,7 +13,6 @@ var TaskList = (function() {
     if(storedTasks !== null){
       taskList = storedTasks;
     }
-
     return taskList;
 
   }
@@ -43,7 +42,7 @@ var TaskList = (function() {
       var taskIndex = find(taskItem.id);
       if(taskIndex >= 0){
         taskList[taskIndex].title = taskItem.title;
-        taskList[taskIndex].tags = taskItem.tags;
+        taskList[taskIndex].labels = taskItem.labels;
         taskList[taskIndex].done = taskItem.done;
         taskList[taskIndex].selected = taskItem.selected;
       }else{
@@ -156,11 +155,10 @@ var TaskList = (function() {
 var FormField = (function() {
 
   // Validate the input field
-  function validateInputField(){
-
-    if( (typeof Main.inputField.value !== 'undefined') && (Main.inputField.value !== '') ){
+  function validateInputField(field){
+    if( (typeof field.value !== 'undefined') && (field.value !== '') ){
       // Remove HTML tags and trim string
-      var taskTitle = Main.inputField.value.replace(/<\/?[^>]+(>|$)/g, "").trim();
+      var taskTitle = field.value.replace(/<\/?[^>]+(>|$)/g, "").trim();
       return taskTitle;
     }else{
       return false;
@@ -170,16 +168,45 @@ var FormField = (function() {
 
 
   // Validate and post field data. Provide id to update existing task
-  function post(){
+  function post(source){
+    if(source.classList.contains('js-newTask')){
+      if(validateInputField(Main.inputField)){
 
-    if(validateInputField()){
-      // Create new object for our task
-      var selectedToDoLabels = Main.getSelectedLabels();
-      var toDo = new TaskList.task(validateInputField(), selectedToDoLabels, false);
-      // ...and post it!
-      TaskList.addItem(toDo);
-    }else{
-      alert('add title pls');
+        document.getElementById('error-notitle').classList.add('hidden');
+
+        // Create new object for our task
+        var selectedToDoLabels = Main.getSelectedLabels(document.getElementById('todo-labels'));
+        var toDo = new TaskList.task(validateInputField(Main.inputField), selectedToDoLabels, false);
+
+        // ...and post it!
+        TaskList.addItem(toDo);
+
+      }else{
+        document.getElementById('error-notitle').classList.remove('hidden');
+        Main.inputField.focus();
+        Main.inputField.classList.add('has-error');
+      }
+
+    }else if(source.classList.contains('js-editTask')){
+      // Edit task
+
+      var editTask = document.getElementsByClassName('task-edit');
+
+      if(editTask.length !== 1){
+        console.log('Error: Could not find what task to edit');
+        return false;
+      }
+
+      var taskTitle = editTask[0].getElementsByClassName('js-editTask')[0];
+      var labels = editTask[0].getElementsByClassName('task-labels')[0];
+
+      if(validateInputField(taskTitle)){
+        var selectedToDoLabels = Main.getSelectedLabels(labels);
+        var tasks = TaskList.getTasks();
+        var index = TaskList.getIndex(taskTitle.dataset.todoid);
+        var toDo = new TaskList.task(taskTitle.value, selectedToDoLabels, tasks[index].done, tasks[index].id, tasks[index].selected);
+        TaskList.addItem(toDo);
+      }
     }
 
   }
@@ -232,9 +259,9 @@ var Main = (function() {
 
 
   // Get and return the currently select task-labels
-  function getSelectedLabels(){
+  function getSelectedLabels(source){
     var selectedToDoLabels = [],
-        selectedCategories = labelsList.getElementsByClassName('label-selected');
+        selectedCategories = source.getElementsByClassName('label-selected');
 
     for (var i = 0; i < selectedCategories.length; i++) {
       selectedToDoLabels.push(selectedCategories[i].dataset.labeltitle);
@@ -249,13 +276,13 @@ var Main = (function() {
 
     // Bind submit by button
     submitBtn.onclick = function(){
-      FormField.postItem();
+      FormField.postItem(this);
     };
 
     // Bind input field: submit by [ENTER]
     inputField.onkeypress = function(e){
       if(e.keyCode === 13){
-        FormField.postItem();
+        FormField.postItem(this);
       }
     };
 
@@ -265,9 +292,10 @@ var Main = (function() {
 
       // Toggle state of submit button
       if(this.value.trim().length){
-        submitBtn.classList.remove('btn-disabled');
+        submitBtn.classList.remove('disabled');
+        inputField.classList.remove('has-error');
       }else{
-        submitBtn.classList.add('btn-disabled');
+        submitBtn.classList.add('disabled');
       }
     };
 
@@ -312,13 +340,15 @@ var Main = (function() {
       }
     }
 
-    // Bind click on task row to toggle select
+    // Bind click on task row to toggle select / mark as done / edit task
     var taskRows = document.getElementsByClassName('task-row');
 
     for (var i = 0; i < taskRows.length; i++) {
       taskRows[i].onclick = function(e){
+
         // Catch if the user clicked the 'mark as done' (child in .task-row)
         if(e.target.classList.contains('task-mark-as-done') || e.target.classList.contains('toDo-done')){
+
             var task = this.dataset.todoid;
             var checkbox = document.getElementById('task-'+ task +'-done');
 
@@ -331,7 +361,13 @@ var Main = (function() {
             var event = new Event('change');
             checkbox.dispatchEvent(event);
 
+        }else if(e.target.classList.contains('btn-edit-task')){
+
+          // Catch click on "edit task"
+          toggleEditTask(this);
+
         }else{
+
           var taskId = this.dataset.todoid;
           var checkBox = document.getElementById('task-' + taskId);
 
@@ -345,6 +381,7 @@ var Main = (function() {
           // Trigger event
           var event = new Event('change');
           checkBox.dispatchEvent(event);
+
         }
       }
     }
@@ -389,8 +426,8 @@ var Main = (function() {
             checkboxes[i].dispatchEvent(event);
           }
         }else{
-          deleteButton.classList.add('btn-disabled');
-          markSelectedAsDone.classList.add('btn-disabled');
+          deleteButton.classList.add('disabled');
+          markSelectedAsDone.classList.add('disabled');
         }
 
       }else{
@@ -399,8 +436,7 @@ var Main = (function() {
     }
 
     // Bind label buttons
-    var labelList = document.getElementById('todo-labels');
-    var labelButtons = labelList.getElementsByClassName('label');
+    var labelButtons = document.getElementsByClassName('label');
     for (var x = 0; x < labelButtons.length; x++) {
       labelButtons[x].onclick = function(){
         this.classList.toggle('label-selected');
@@ -437,21 +473,83 @@ var Main = (function() {
       }
 
       if(rowSelected){
-        deleteButton.classList.remove('btn-disabled');
-        markSelectedAsDone.classList.remove('btn-disabled');
+        deleteButton.classList.remove('disabled');
+        markSelectedAsDone.classList.remove('disabled');
       }else{
-        deleteButton.classList.add('btn-disabled');
-        markSelectedAsDone.classList.add('btn-disabled');
+        deleteButton.classList.add('disabled');
+        markSelectedAsDone.classList.add('disabled');
       }
     }
 
     // Save task as marked as done (triggered when checkbox is ticked)
     function markAsDoneEvent(task){
-      var tasks = TaskList.getTasks();
-      var index = TaskList.getIndex(task.dataset.todoid);
-      var toDo = new TaskList.task(tasks[index].title, tasks[index].labels, task.checked, tasks[index].id, tasks[index].selected);
+      var tasks = TaskList.getTasks(),
+          index = TaskList.getIndex(task.dataset.todoid),
+          toDo = new TaskList.task(tasks[index].title, tasks[index].labels, task.checked, tasks[index].id, tasks[index].selected);
+
       TaskList.addItem(toDo);
     }
+  }
+
+  function toggleEditTask(task){
+    var editButton = task.getElementsByClassName('btn-edit-task')[0],
+        saveButton = task.getElementsByClassName('btn-save-task')[0],
+        cancelButton = task.getElementsByClassName('btn-cancel-task')[0],
+        tasksEditing = document.getElementsByClassName('task-edit'),
+        taskLabels = document.getElementsByClassName('task-label');
+
+    // Remove edit-state of other tasks
+    for (var i = 0; i < taskLabels.length; i++) {
+      taskLabels[i].classList.add('disabled');
+    }
+
+    for (var i = 0; i < tasksEditing.length; i++) {
+      var inputField = tasksEditing[i].getElementsByClassName('task-row-title')[0];
+      inputField.disabled = true;
+      inputField.blur();
+      tasksEditing[i].classList.remove('task-edit');
+      hookEvents();
+    }
+
+
+    // Add edit state to current task
+    task.classList.add('task-edit', 'js-editTask');
+    var inputField = task.getElementsByClassName('task-row-title')[0],
+        taskLabels = task.getElementsByClassName('task-label');
+    for (var i = 0; i < taskLabels.length; i++) {
+      taskLabels[i].classList.remove('disabled');
+    }
+
+    // Bind cancel button
+    cancelButton.onclick = function(){
+      task.classList.remove('task-edit');
+      hookEvents();
+    }
+
+    // Save button
+    saveButton.onclick = function(){
+      FormField.postItem(task);
+      task.classList.remove('task-edit');
+      hookEvents();
+    }
+
+    // Unbind click event on the row that is being edited
+    var taskRows = document.getElementsByClassName('task-edit');
+    for (var i = 0; i < taskRows.length; i++) {
+      taskRows[i].onclick = null;
+    }
+
+    inputField.disabled = false;
+
+    // Bind [ENTER]
+    inputField.onkeypress = function(e){
+      if(e.keyCode === 13){
+        FormField.postItem(this);
+      }
+    };
+
+    inputField.focus();
+
   }
 
   function updateToDoList(filter){
@@ -471,6 +569,13 @@ var Main = (function() {
     var tasks = TaskList.getTasks();
 
     if(tasks !== null){
+      if(!tasks.length){
+        taskList.innerHTML = '<li class="text-center"><p class="text-faded">No tasks registered. Go ahead and add some!</p></li>';
+        return false;
+      }
+
+      document.getElementById('selectAll').classList.remove('disabled');
+
       for (var i = 0; i < tasks.length; i++) {
 
         // Loop tasks and create an object that we can append to our list
@@ -481,7 +586,8 @@ var Main = (function() {
             taskSelected = tasks[i].selected,
             taskDoneChecked = '',
             taskSelectedChecked = '',
-            filtered = '';
+            filtered = '',
+            editTaskState = 'disabled';
 
         /*
           If we have a filter argument passed in, update 'filtered'
@@ -502,6 +608,7 @@ var Main = (function() {
           taskDoneChecked = 'checked';
         }else{
           taskDone = '';
+          editTaskState = '';
         }
 
         if(taskSelected){
@@ -517,20 +624,40 @@ var Main = (function() {
         var taskItem = '<li class="task-row row '+ taskDone +' '+ filtered +' '+ taskSelected +'" data-todoid="'+ taskId +'">'
                       +'<div class="col-2-4 flex-vertical-center-children">'
                       +'<input name="toDo-select" '+ taskSelectedChecked +' type="checkbox" id="task-'+ taskId +'" class="toDo-checkBox hidden" data-todoid="'+ taskId +'"/>'
-                      +'<label class="task-row-title" for="task-'+ taskId +'">'+ taskTitle +'</label>'
+                      +'<textarea rows="2" class="js-editTask task-row-title" disabled data-todoid="'+ taskId +'">'+ taskTitle +'</textarea>'
                       +'</div><div class="col-2-4 flex-vertical-center-children">'
-                      +'<ul class="list-inline list-unstyled task-labels" id="task-labels-'+ taskId +'"></ul>'
-                      +'<input name="toDo-done" data-todoid="'+ taskId +'" type="checkbox" '+ taskDoneChecked +' class="toDo-done toDo-checkBox hidden" data-todoid="'+ taskId +'" id="task-'+ taskId  +'-done"/><label for="task-'+ taskId  +'-done" class="pull-right">'+ svgCheck +'</label>'
+                      +'<ul class="list-inline list-unstyled task-labels col-2-4" id="task-labels-'+ taskId +'"></ul>'
+                      +'<ul class="list-inline list-unstyled">'
+                      +'<li>'
+                      +'<button class="btn btn-bordered btn-md btn-edit-task '+ editTaskState +'" data-taskid="'+ taskId +'">Edit task</button>'
+                      +'<button class="btn btn-bordered btn-md btn-grey btn-cancel-task" data-taskid="'+ taskId +'">Cancel</button>'
+                      +'<button class="btn btn-bordered btn-success btn-md btn-save-task" data-taskid="'+ taskId +'">Save task</button>'
+                      +'</li><li>'
+                      +'<input name="toDo-done" data-todoid="'+ taskId +'" type="checkbox" '+ taskDoneChecked +' class="toDo-done toDo-checkBox hidden" data-todoid="'+ taskId +'" id="task-'+ taskId  +'-done"/>'
+                      +'<label for="task-'+ taskId  +'-done" class="pull-right">'+ svgCheck +'</label>'
+                      +'</li>'
+                      +'</ul>'
                       +'</div></li>';
 
         taskList.innerHTML += taskItem;
 
 
         // Create list of labels that are attached to the task and append it to the DOM.
+        var allTaskLabels = TaskList.getLabels;
         var taskLabelsList = document.getElementById('task-labels-'+taskId);
         var taskLabelsStr = '';
-        for (var z = 0; z < taskLabels.length; z++) {
-          taskLabelsStr += '<li class="label label-sm label-selected label-'+ taskLabels[z].toString().replace(' ','') +' disabled">'+ taskLabels[z] +'</li>';
+
+        for (var z = 0; z < allTaskLabels.length; z++) {
+          var labelClass = '';
+
+          if(taskLabels.indexOf(allTaskLabels[z]) > -1){
+            labelClass = 'label-selected';
+          }else{
+            labelClass = 'disabled';
+          }
+
+
+          taskLabelsStr += '<li class="label label-sm task-label ' + labelClass + ' label-'+ allTaskLabels[z].toString().replace(' ','') +'" data-labeltitle="' + allTaskLabels[z] + '">'+ allTaskLabels[z] +'</li>';
         }
 
         taskLabelsList.innerHTML += taskLabelsStr;
@@ -549,7 +676,8 @@ var Main = (function() {
     inputField : inputField,
     init : init,
     updateToDoList : updateToDoList,
-    getSelectedLabels : getSelectedLabels
+    getSelectedLabels : getSelectedLabels,
+    labelsList : labelsList
   };
 
 })();

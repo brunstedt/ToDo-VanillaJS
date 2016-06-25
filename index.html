@@ -10,21 +10,21 @@
 
       <!--- Input / search field--->
       <div class="row">
-        <input type="text" id="todo-input" placeholder="Search or add item" />
-        <button class="btn btn-lg btn-success btn-disabled" id="todo-submit">Add</button>
+        <input type="text" id="todo-input" class="js-newTask" placeholder="Search or add item" />
+        <button class="btn btn-lg btn-success js-newTask disabled" id="todo-submit">Add task</button>
       </div>
 
       <!--- ToDo labels --->
       <div class="row">
-        <ul class="list-inline list-unstyled" id="todo-labels"></ul>
+        <ul class="list-inline list-unstyled" id="todo-labels"></ul><p class="pull-right text-danger hidden" id="error-notitle">Oops, a title would be nice!</p>
       </div>
 
       <!--- ToDo list actions --->
       <div class="row">
-        <ul class="list-inline list-unstyled">
-          <li><button id="selectAll" class="btn btn-md btn-bordered">Select all tasks</button></li>
-          <li><button id="delete-todos" class="btn btn-md btn-bordered btn-danger btn-disabled">Delete selected</button></li>
-          <li><button id="markasdone-todos" class="btn btn-md btn-bordered btn-success btn-disabled">Mark selected as done</button></li>
+        <ul class="list-inline list-unstyled" id="todo-list-actions">
+          <li><button id="selectAll" class="btn btn-md btn-bordered disabled">Select all tasks</button></li>
+          <li><button id="delete-todos" class="btn btn-md btn-bordered btn-danger disabled">Delete selected</button></li>
+          <li><button id="markasdone-todos" class="btn btn-md btn-bordered btn-success disabled">Mark selected as done</button></li>
         </ul>
       </div>
 
