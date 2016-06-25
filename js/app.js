@@ -172,8 +172,6 @@ var FormField = (function() {
     if(source.classList.contains('js-newTask')){
       if(validateInputField(Main.inputField)){
 
-        document.getElementById('error-notitle').classList.add('hidden');
-
         // Create new object for our task
         var selectedToDoLabels = Main.getSelectedLabels(document.getElementById('todo-labels'));
         var toDo = new TaskList.task(validateInputField(Main.inputField), selectedToDoLabels, false);
@@ -294,6 +292,7 @@ var Main = (function() {
       if(this.value.trim().length){
         submitBtn.classList.remove('disabled');
         inputField.classList.remove('has-error');
+        document.getElementById('error-notitle').classList.add('hidden');
       }else{
         submitBtn.classList.add('disabled');
       }
