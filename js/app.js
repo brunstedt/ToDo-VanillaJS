@@ -70,7 +70,11 @@ var TaskList = (function() {
 
   // Save to local storage
   function save(){
-    localStorage.setItem('tasks', JSON.stringify(taskList));
+    if(typeof localStorage !== 'undefined'){
+      localStorage.setItem('tasks', JSON.stringify(taskList));
+    }else{
+      return false;
+    }
   }
 
 
