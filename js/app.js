@@ -511,7 +511,11 @@ var Main = (function() {
 
 
     // Add edit state to current task
-    task.classList.add('task-edit', 'js-editTask');
+
+    // Doing two separate classList.add since IE 11 dont support multiple adds
+    task.classList.add('task-edit');
+    task.classList.add('js-editTask');
+
     var inputField = task.getElementsByClassName('task-row-title')[0],
         taskLabels = task.getElementsByClassName('task-label');
     for (var i = 0; i < taskLabels.length; i++) {
