@@ -35,13 +35,21 @@ var TaskList = (function() {
 
       var id = '';
       if(taskList !== null){
+          taskItem.id = taskList.length;
           id = taskList.length;
       }else{
           id = '0';
       }
 
       taskItem.id = id;
+
+      if(taskList === null){
+        taskList = [];
+      }
+
       taskList.unshift(taskItem);
+
+
     }else{
       /* We got an id, so we check to see if it exists already.
          If we find the id, we update that task, otherwise we'll
